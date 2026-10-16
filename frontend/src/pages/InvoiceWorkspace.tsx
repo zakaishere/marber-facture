@@ -1,0 +1,14 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import http from '@/api/http';
+import { Button } from '@/components/ui/button';
+import { formatCurrency } from '@/utils/tva';
+import type { MarbleDocument } from '@/models/document';
+import Factures from './Factures';
+function RestrictedInvoices() {
+  const [rows, setRows] = useState<MarbleDocument[]>([]); const [page, setPage] = useState(1); const [total, setTotal] = useState(0); const [error, setError] = useState(''); const [loading, setLoading] = useState(true);
+  useEffect(() => { let active = true; setLoading(true); http.get<{ data: MarbleDocument[]; total: number }>('/factures', { params: { paged: true, page, limit: 50 } }).then(response => { if (active) { setRows(response.data.data); setTotal(response.data.total); setError(''); } }).catch(() => { if (active) setError('Chargement des factures impossible.'); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [page]);
+  return <div className="p-4 lg:p-8 space-y-6"><div className="flex flex-wrap justify-between gap-4"><div><h1 className="text-3xl">Factures</h1><p className="text-sm text-muted-foreground mt-2">Créez une facture, consultez toutes les factures et imprimez-les ou téléchargez leur PDF.</p></div><Button asChild><Link to="/factures/new">Créer une facture</Link></Button></div>{error && <p role="alert" className="text-destructive">{error}</p>}<div className="rounded-xl border bg-card overflow-x-auto"><table className="mobile-record-table w-full text-sm"><thead><tr className="border-b text-left"><th className="p-4">Numéro</th><th>Date</th><th>Client</th><th>Total TTC</th><th /></tr></thead><tbody>{rows.map(row => <tr key={row.id} className="border-b"><td data-label="Numéro" className="p-4">{row.code}</td><td data-label="Date">{row.date}</td><td data-label="Client">{row.client?.name}</td><td data-label="Total TTC" className="whitespace-nowrap">{formatCurrency(Number(row.totalTtc))}</td><td data-label="Actions" className="p-3 text-right"><Button asChild variant="outline"><Link to={`/factures/${row.id}`}>Voir / Imprimer</Link></Button></td></tr>)}</tbody></table>{!rows.length && <p className="p-8 text-muted-foreground">{loading ? 'Chargement…' : 'Aucune facture créée.'}</p>}</div><div className="flex items-center justify-end gap-3"><Button variant="outline" disabled={page === 1 || loading} onClick={() => setPage(value => value - 1)}>Précédent</Button><span className="text-sm">Page {page} · {total} facture(s)</span><Button variant="outline" disabled={page * 50 >= total || loading} onClick={() => setPage(value => value + 1)}>Suivant</Button></div></div>;
+}
+export default function InvoiceWorkspace() { const { user } = useAuth(); return user?.role === 'ROLE_INVOICING' ? <RestrictedInvoices /> : <Factures />; }

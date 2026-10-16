@@ -1,0 +1,65 @@
+# Private environment files. Commit templates only.
+.env
+.env.*
+!.env.example
+
+# Private keys and local credential stores
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Dependencies and build output
+node_modules/
+target/
+dist/
+build/
+.vite/
+.cache/
+*.class
+
+# Local databases, backups and exported data
+/backend/data/
+/backups/
+*.mv.db
+*.trace.db
+*.h2.db
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.zip
+
+# Generated verification files and root-level screenshots/documents.
+# frontend/public images and backend SQL migrations remain included.
+/tmp/
+/output/
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.pdf
+
+# Logs and test reports
+*.log
+logs/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Editor, OS and temporary files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.suo
+*.swp
+*.swo
+*.tmp
+*.temp
+*~

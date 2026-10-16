@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Deep Blue & Soft Slate Theme */
+    --background: 33.3 29.0% 93.9%;
+    /* #F4F7FA - Soft blue-gray background */
+    --foreground: 30.0 10.7% 11.0%;
+
+    --card: 0.0 0.0% 100.0%;
+    /* Pure white for cards */
+    --card-foreground: 30.0 10.7% 11.0%;
+
+    --popover: 0.0 0.0% 100.0%;
+    --popover-foreground: 30.0 10.7% 11.0%;
+
+    --primary: 34.7 35.6% 45.7%;
+    /* #2563EB - Vibrant rich blue */
+    --primary-foreground: 0.0 0.0% 100.0%;
+
+    --secondary: 36.7 30.0% 88.2%;
+    --secondary-foreground: 30.0 10.7% 11.0%;
+
+    --muted: 35.0 28.6% 91.8%;
+    --muted-foreground: 30.0 6.2% 44.3%;
+
+    --accent: 35.6 44.3% 88.0%;
+    --accent-foreground: 33.3 40.6% 30.4%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 36.0 24.6% 88.0%;
+    --input: 35.0 26.1% 82.0%;
+    --ring: 34.5 42.9% 60.2%;
+    /* Blue ring for focus */
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --radius: 0.75rem;
+    /* 12px rounded corners */
+
+    /* Deep Navy Sidebar */
+    --sidebar-background: 20.0 8.1% 7.3%;
+    /* #1A2233 - Deep navy */
+    --sidebar-foreground: 33.9 23.2% 80.6%;
+    --sidebar-primary: 34.5 42.9% 60.2%;
+    /* Bright blue for active */
+    --sidebar-primary-foreground: 20.0 8.1% 7.3%;
+    --sidebar-accent: 25.7 9.6% 14.3%;
+    --sidebar-accent-foreground: 32.7 45.8% 90.6%;
+    --sidebar-border: 25.7 9.6% 14.3%;
+    --sidebar-ring: 34.5 42.9% 60.2%;
+
+    /* Table specific colors */
+    --table-header-bg: 33.7 32.0% 90.2%;
+    /* #E8EBF0 - Light indigo-blue */
+    --table-header-text: 32.1 20.9% 26.3%;
+    /* Dark blue text */
+    --table-row-even: 36.0 45.5% 97.8%;
+    /* #F9FBFF - Very faint blue */
+    --table-code-text: 32.9 36.9% 32.9%;
+    /* Bold navy blue for code */
+  }
+
+  .dark {
+    --background: 33.3 29.0% 93.9%;
+    --foreground: 30.0 10.7% 11.0%;
+
+    --card: 0.0 0.0% 100.0%;
+    --card-foreground: 30.0 10.7% 11.0%;
+
+    --popover: 0.0 0.0% 100.0%;
+    --popover-foreground: 30.0 10.7% 11.0%;
+
+    --primary: 34.7 35.6% 45.7%;
+    --primary-foreground: 0.0 0.0% 100.0%;
+
+    --secondary: 36.7 30.0% 88.2%;
+    --secondary-foreground: 30.0 10.7% 11.0%;
+
+    --muted: 35.0 28.6% 91.8%;
+    --muted-foreground: 30.0 6.2% 44.3%;
+
+    --accent: 35.6 44.3% 88.0%;
+    --accent-foreground: 33.3 40.6% 30.4%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 36.0 24.6% 88.0%;
+    --input: 35.0 26.1% 82.0%;
+    --ring: 34.5 42.9% 60.2%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --sidebar-background: 20.0 8.1% 7.3%;
+    --sidebar-foreground: 33.9 23.2% 80.6%;
+    --sidebar-primary: 34.5 42.9% 60.2%;
+    --sidebar-primary-foreground: 20.0 8.1% 7.3%;
+    --sidebar-accent: 25.7 9.6% 14.3%;
+    --sidebar-accent-foreground: 32.7 45.8% 90.6%;
+    --sidebar-border: 25.7 9.6% 14.3%;
+    --sidebar-ring: 34.5 42.9% 60.2%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    max-width: 100vw;
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  body {
+    position: relative;
+  }
+}
+
+@layer utilities {
+  .table-header-bg {
+    background-color: hsl(var(--table-header-bg));
+  }
+
+  .table-row-even {
+    background-color: hsl(var(--table-row-even));
+  }
+
+  .table-code-text {
+    color: hsl(var(--table-code-text));
+    font-weight: 600;
+  }
+
+  .glassmorphism {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* Hide number input spinners */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+}
+/* Marble palette from mockup.html. */
+@layer base { h1, h2, h3 { letter-spacing: -.025em; } button, input, select { transition: border-color .15s, background-color .15s; } }
+@layer utilities { .stone-hero { background: linear-gradient(115deg,#29221c,#141211); color:#f2e8dc; } .stone-kicker { color:#c5a06e; letter-spacing:.18em; text-transform:uppercase; font-size:.7rem; font-weight:600; } }
+
+/* Arabic Stone: natural stone, warm paper and quiet brass accents. */
+.stone-brand{display:flex;align-items:center;gap:14px;color:#242420}.stone-brand-name{font-family:Georgia,'Times New Roman',serif;display:block;font-size:27px;letter-spacing:.17em;line-height:.95;font-weight:400}.stone-brand-tagline{display:block;border-top:1px solid #bca57c;padding-top:8px;margin-top:9px;font-size:6px;letter-spacing:.18em;color:#9a8159;white-space:nowrap}.stone-brand-light{color:#eeeae0}.stone-brand-mark{display:block;position:relative;overflow:hidden;width:49px;height:64px;flex-shrink:0;background:#171918 url('/images/black-gold-marble.png') center/cover;border:1px solid #88775e}.stone-brand-mark i{position:absolute;inset:-10px 20px -10px -20px;background:linear-gradient(140deg,#f8f3e8,#d5cabb 42%,#998975 44%,#f3e7d5 46%,#faf7ef 68%,#958671 70%,#ded4c5);transform:rotate(24deg)}
+.stone-brand-official{max-width:100%;width:230px;flex-shrink:0}
+.stone-brand-logo{display:block;width:100%;aspect-ratio:2.8;background:url('/images/arabic-stone-logo.png') center/cover no-repeat}
+.stone-login{min-height:100dvh;background:linear-gradient(#080a09c2,#080a09c7),url('/images/black-gold-marble.png') center/cover fixed;display:flex;align-items:center;justify-content:center;padding:30px 20px}
+.stone-login-content{width:100%;max-width:540px}
+.stone-login-brand{display:flex;justify-content:center;margin-bottom:28px}
+.stone-login-brand .stone-brand{width:340px;max-width:90%}
+.stone-login-brand .stone-brand-logo{mix-blend-mode:lighten}
+.stone-login-heading{text-align:center;color:#f0ebdf;margin-bottom:28px}
+.stone-login-heading h1{font-family:Georgia,'Times New Roman',serif;font-size:32px;margin-bottom:10px}
+.stone-login-heading p{font-size:14px;color:#ccc3b4}
+.stone-login-card{border:1px solid #e0d9ce;border-radius:20px;background:#fbfaf7f7;box-shadow:0 25px 75px #0005}
+.stone-login-card input{height:50px;background:#fffaf5;border-color:#ddd7ce;border-radius:12px}
+.stone-login-card button[type=submit]{height:50px;border-radius:12px}
+.stone-sidebar{background:linear-gradient(0deg,#080b0a99,#080b0ad9),url('/images/black-gold-marble.png') center/cover;color:#d9d5cb}.stone-sidebar nav a{font-size:13px;border:1px solid transparent}.stone-sidebar nav a:focus-visible{outline:2px solid #c5a06e;outline-offset:2px}.stone-sidebar nav a.stone-nav-active{background:linear-gradient(110deg,#bba37339,#bba37318);border-color:#bba37370;box-shadow:inset 0 0 12px #bba37312;color:#f0e8d5}.stone-sidebar-quote span{display:block;width:34px;height:1px;background:#bba373;margin-bottom:17px}.stone-sidebar-quote p{font:italic 13px/1.8 Georgia,serif;color:#c2bcaf}.stone-topbar{height:68px;align-items:center;justify-content:space-between;padding:0 32px;border-bottom:1px solid #e6dfd4;background:#faf7f1c9}.stone-avatar{width:33px;height:33px;display:grid;place-items:center;background:#e9dfce;border:1px solid #d3c2a3;color:#735c35;border-radius:50%;font:18px Georgia,serif}.stone-hero{background:linear-gradient(105deg,#101411f2 10%,#13161299 65%,#13161244),url('/images/black-gold-marble.png') center/cover;color:#f5eee1;border:1px solid #84735666;box-shadow:0 6px 20px #2a211a12}.stone-hero h2,.dashboard-page h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;letter-spacing:-.025em}.stone-hero h2 em{color:#d4bf9b;font-weight:400}.stone-editorial{background-position:right center;transition:transform .2s,box-shadow .2s}.stone-editorial:hover{transform:translateY(-2px);box-shadow:0 8px 24px #2a211a22}.stone-date{font-size:12px;background:#fbf8f2;border:1px solid #e3dbcf;border-radius:8px;padding:12px 16px;color:#746950}.stone-icon{display:inline-flex;align-items:center;justify-content:center;padding:10px;border-radius:50%;background:#eee6d6;color:#786647;flex-shrink:0}.stone-stat{background:linear-gradient(120deg,#fffcf7,#f8f4ed);box-shadow:0 3px 13px #3b2d1710}.stone-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid hsl(var(--border));padding:18px 20px}.stone-panel-heading h2{font-size:14px;font-weight:600;letter-spacing:-.01em}.stone-see-all{display:flex;align-items:center;gap:6px;font-size:11px;color:#8a7048}.stone-see-all:hover{text-decoration:underline}.stone-status{display:inline-block;border-radius:5px;background:#f4e9d3;color:#896527;font-size:10px;padding:4px 8px;font-weight:600}.stone-status-paid{background:#e7eee5;color:#4c6b4a}.stone-swatch{width:34px;height:34px;display:block;flex-shrink:0;border-radius:5px;border:1px solid #d3c7b7;background:url('/images/black-gold-marble.png') center/cover}.stone-swatch-0{filter:sepia(.5);opacity:.65}.stone-swatch-2{filter:grayscale(1);opacity:.85}
+@media(prefers-reduced-motion:reduce){.stone-editorial{transition:none}.stone-editorial:hover{transform:none}}
+
+/* Phone/tablet workflows. Print/export styles remain independent. */
+@media screen and (max-width:1023px) {
+  .app-main { padding-top:calc(56px + env(safe-area-inset-top)); padding-bottom:calc(90px + env(safe-area-inset-bottom)); }
+  .mobile-app-header { height:calc(56px + env(safe-area-inset-top)); padding-top:env(safe-area-inset-top); gap:10px; }
+  .app-shell button,.app-shell [role="combobox"],.mobile-dialog button,.mobile-sheet button,.stone-login button { min-height:44px; min-width:44px; }
+  .app-shell button[aria-label],.mobile-dialog button[aria-label],.mobile-sheet button[aria-label] { min-width:44px; }
+  .app-shell input:not([type="checkbox"]):not([type="radio"]),.app-shell select,.app-shell textarea,
+  .mobile-dialog input:not([type="checkbox"]):not([type="radio"]),.mobile-dialog textarea,.mobile-dialog select,
+  .mobile-sheet input:not([type="checkbox"]):not([type="radio"]),.stone-login input { font-size:16px; min-height:44px; }
+  [cmdk-input] { font-size:16px!important; min-height:48px; }
+  [cmdk-list] { max-height:min(320px,40dvh); overscroll-behavior:contain; }
+  [cmdk-item] { min-height:48px; }
+  .app-main .grid>* { min-width:0; }
+  .app-main h1 { overflow-wrap:anywhere; }
+  .app-main :is(input,textarea,select,button,a) { touch-action:manipulation; }
+  .app-main :is(input,textarea,select) { scroll-margin:90px 0 150px; }
+  .mobile-tabbar { position:fixed; bottom:0; left:0; right:0; z-index:30; display:flex; justify-content:space-around; gap:4px; border-top:1px solid #dfd6c8; background:#fbf8f2f5; backdrop-filter:blur(12px); padding:6px 8px calc(6px + env(safe-area-inset-bottom)); }
+  .mobile-tabbar a { flex:1; min-height:52px; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:#766c5c; border-radius:10px; font-size:11px; }
+  .mobile-tabbar .is-active { background:#aa88551a; color:#7b5b29; font-weight:600; }
+  .mobile-sheet { max-width:92vw; max-height:100dvh; overflow-y:auto; overscroll-behavior:contain; }
+  .mobile-dialog { width:calc(100vw - 24px)!important; max-width:min(900px,calc(100vw - 24px))!important; max-height:calc(100dvh - 24px)!important; overflow-y:auto; overscroll-behavior:contain; padding:20px; }
+  .mobile-dialog>button:last-child,.mobile-sheet>button:last-child { min-height:44px; min-width:44px; top:4px; right:4px; display:flex; align-items:center; justify-content:center; }
+  .mobile-dialog h2 { padding-right:22px; }
+  .document-lines { display:block; min-width:0!important; width:100%; table-layout:auto; }
+  .document-lines colgroup,.document-lines thead { display:none; }
+  .document-lines tbody { display:grid; gap:12px; padding:12px; }
+  .document-lines .document-line { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); border:1px solid #e0d7ca; border-radius:12px; padding:8px; background:#fff; }
+  .document-line>td { display:block; min-width:0; width:auto; padding:8px; text-align:left; white-space:normal; }
+  .document-line>td::before { content:attr(data-label); display:block; font-size:12px; font-weight:500; color:#766c5c; margin-bottom:6px; }
+  .document-line>td:first-child,.document-line>td:last-child { grid-column:1/-1; }
+  .document-line>td:last-child { display:flex; justify-content:flex-end; gap:8px; }
+  .document-line>td:last-child::before { display:none; }
+  .document-line>td[data-label="Montant TTC"] { overflow-wrap:anywhere; color:#785b31; }
+  .document-line>td[data-label="m²"] { background:#f7f4ed; border-radius:8px; align-self:center; overflow-wrap:anywhere; }
+  .document-lines .document-line-warning { display:block; padding:0 8px 8px; border-radius:8px; }
+  .document-line-warning td { display:block; }
+  .document-lines .document-line-subtotal { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-radius:8px; padding:8px; align-items:center; }
+  .document-line-subtotal td { display:block; padding:6px; white-space:normal; overflow-wrap:anywhere; }
+  .document-line-subtotal td:first-child { grid-column:1/3; }
+  .document-line-subtotal td:nth-child(4) { display:none; }
+  .document-line-subtotal td[data-label]::before { content:attr(data-label); display:block; font-size:11px; color:#766c5c; font-weight:400; }
+  .document-line-actions { display:grid; grid-template-columns:1fr; gap:8px; }
+  .document-line-actions button { justify-content:flex-start; }
+  .document-savebar { display:grid; grid-template-columns:1fr; gap:8px; padding:10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .document-savebar>div:first-child { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .document-savebar>div:first-child p:last-child { margin:0; font-size:18px; overflow-wrap:anywhere; }
+  .document-savebar>div:last-child { display:flex; }
+  .document-savebar>div:last-child button:last-child { flex:1; white-space:normal; line-height:1.25; }
+  .document-detail>div:first-child>div:last-child { width:100%; }
+  .document-detail>div:first-child>div:last-child>button,.document-detail>div:first-child>div:last-child>a { flex:1; }
+  .document-detail .grid p:last-child,.stone-stat .tabular-nums { overflow-wrap:anywhere; font-size:clamp(17px,4.6vw,24px); }
+  .payment-form>div:last-child { padding-top:0; }
+  .invoice-preview-canvas .fp-container { width:850px; }
+  .mobile-record-table { display:block; width:100%; }
+  .mobile-record-table thead { display:none; }
+  .mobile-record-table tbody { display:grid; gap:12px; padding:12px; }
+  .mobile-record-table tbody tr { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); border:1px solid #e0d7ca; border-radius:12px; padding:8px; background:#fff; }
+  .mobile-record-table tbody td { display:block; padding:8px; min-width:0; width:auto; text-align:left; white-space:normal; overflow-wrap:anywhere; }
+  .mobile-record-table tbody td::before { content:attr(data-label); display:block; font-size:11px; line-height:1.4; color:#82745f; margin-bottom:5px; font-weight:400; }
+  .mobile-record-table tbody td:first-child { grid-column:1/-1; font-weight:600; }
+  .mobile-record-table tbody td[data-label="Actions"] { grid-column:1/-1; display:flex; justify-content:flex-end; gap:8px; }
+  .mobile-record-table tbody td[data-label="Actions"]::before { display:none; }
+  .app-main nav[aria-label="pagination"] { width:auto; margin:0; }
+  .app-main nav[aria-label="pagination"] ul { flex-wrap:wrap; }
+}
+@media screen and (max-width:479px) {
+  .mobile-dialog { padding:18px 16px; }
+  .stone-login { padding:20px 12px; background-attachment:scroll; }
+  .stone-login-brand { margin-bottom:18px; }
+  .stone-login-heading { margin-bottom:18px; }
+  .stone-login-heading h1 { font-size:28px; }
+  .stone-stat>div { padding:16px 12px; }
+  .stone-stat .stone-icon { display:none; }
+  .stone-stat p.text-sm { font-size:12px; }
+  .document-editor>div:first-child { flex-wrap:wrap; }
+}
+
+@media screen and (max-width:1023px) {
+  .mobile-dialog>* { min-width:0; max-width:100%; }
+  .mobile-dialog p { overflow-wrap:anywhere; }
+  .category-actions { width:100%; flex-wrap:wrap; }
+  .category-actions button { flex:1; padding-inline:10px; font-size:12px; }
+  .mobile-dialog nav[aria-label="pagination"] { min-width:0; max-width:100%; }
+  .mobile-dialog nav[aria-label="pagination"] ul { flex-wrap:wrap; }
+  .mobile-dialog nav[aria-label="pagination"] button { padding-inline:8px; font-size:12px; }
+}
+
+@media screen and (min-width:1024px) and (max-width:1279px) {
+  .document-lines { display:block; min-width:0!important; width:100%; table-layout:auto; }
+  .document-lines colgroup,.document-lines thead { display:none; }
+  .document-lines tbody { display:grid; gap:12px; padding:12px; }
+  .document-lines .document-line { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); border:1px solid #e0d7ca; border-radius:12px; padding:8px; background:#fff; }
+  .document-line>td { display:block; min-width:0; width:auto; padding:8px; text-align:left; white-space:normal; }
+  .document-line>td::before { content:attr(data-label); display:block; font-size:12px; font-weight:500; color:#766c5c; margin-bottom:6px; }
+  .document-line>td:first-child,.document-line>td:last-child { grid-column:1/-1; }
+  .document-line>td:last-child { display:flex; justify-content:flex-end; gap:8px; }
+  .document-line>td:last-child::before { display:none; }
+  .document-line>td[data-label="Montant TTC"] { overflow-wrap:anywhere; color:#785b31; }
+  .document-line>td[data-label="m²"] { background:#f7f4ed; border-radius:8px; align-self:center; overflow-wrap:anywhere; }
+  .document-lines .document-line-warning { display:block; padding:0 8px 8px; border-radius:8px; }
+  .document-line-warning td { display:block; }
+  .document-lines .document-line-subtotal { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-radius:8px; padding:8px; align-items:center; }
+  .document-line-subtotal td { display:block; padding:6px; white-space:normal; overflow-wrap:anywhere; }
+  .document-line-subtotal td:first-child { grid-column:1/3; }
+  .document-line-subtotal td:nth-child(4) { display:none; }
+  .document-line-subtotal td[data-label]::before { content:attr(data-label); display:block; font-size:11px; color:#766c5c; font-weight:400; }
+  .document-line-actions { display:grid; grid-template-columns:1fr; gap:8px; }
+  .document-line-actions button { justify-content:flex-start; }
+}
+
+@media screen and (max-width:1023px) {
+  .document-editor { padding-bottom:calc(180px + env(safe-area-inset-bottom)); }
+  .document-savebar>div:last-child button:last-child { height:auto; padding:10px 8px; }
+}

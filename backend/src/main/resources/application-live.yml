@@ -1,0 +1,31 @@
+# Live PostgreSQL profile. No demo seed and no built-in credentials.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/postgresql
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+  jdbc:
+    template:
+      query-timeout: 30s
+  transaction:
+    default-timeout: 60s
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET}
+  admin:
+    username: ${APP_ADMIN_USERNAME:admin}
+    password: ${APP_ADMIN_PASSWORD}
+  demo:
+    enabled: false
+server:
+  tomcat:
+    threads:
+      max: 50
+    max-http-form-post-size: 2MB
+

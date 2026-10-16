@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: marble_invoicing
+      POSTGRES_USER: marble
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run configure-live.ps1 first}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - marble_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marble -d marble_invoicing"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:4000:4000"
+    environment:
+      SPRING_PROFILES_ACTIVE: live
+      DB_URL: jdbc:postgresql://db:5432/marble_invoicing
+      DB_USERNAME: marble
+      DB_PASSWORD: ${DB_PASSWORD:?Run configure-live.ps1 first}
+      APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME:-admin}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:?Run configure-live.ps1 first}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:?Run configure-live.ps1 first}
+      APP_DEMO_ENABLED: false
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  marble_data:
+

@@ -1,0 +1,1 @@
+ALTER TABLE factures ADD COLUMN notes TEXT;

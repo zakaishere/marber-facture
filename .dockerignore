@@ -1,0 +1,54 @@
+# Version-control metadata
+.git
+**/.git
+
+# Secrets and local environment files
+**/.env
+**/.env.*
+!**/.env.example
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+
+# Local dependencies and generated build output
+**/node_modules
+**/target
+**/dist
+**/build
+**/.vite
+**/.cache
+**/*.class
+
+# Local data, backups and verification artifacts
+/backend/data
+/backups
+/tmp
+/output
+**/*.mv.db
+**/*.trace.db
+**/*.h2.db
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/*.dump
+**/*.backup
+**/*.zip
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.pdf
+
+# Logs, reports and workstation files
+**/*.log
+**/coverage
+**/.nyc_output
+**/playwright-report
+**/test-results
+**/.idea
+**/.vscode
+**/.DS_Store
+**/Thumbs.db

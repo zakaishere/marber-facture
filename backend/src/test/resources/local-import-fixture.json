@@ -1,0 +1,11 @@
+{
+  "format": "marble-application-export-v1",
+  "profile": {"company": {"name": "Pierre conservée", "phone_fix": "0539000000", "rc": "TEST-RC"}},
+  "categories": [{"id":"saved-category","name":"Marbre","createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00"}],
+  "clients": [{"id":"saved-client","name":"Client conservé","createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00"}],
+  "suppliers": [],
+  "products": [{"id":"saved-product","name":"Pierre conservée","code":"SAVED","categoryId":"saved-category","salePrice":120,"lastPurchasePrice":100,"tvaRate":0.2,"quantity":0,"minStock":0,"createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00"}],
+  "factures": [{"id":"saved-invoice","code":"2610001","date":"2026-10-16","clientId":"saved-client","status":"NOT_DECLARED","paymentMethod":"ESPECE","totalHt":100,"totalTva":20,"totalTtc":120,"paidAmount":60,"createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00","client":{"id":"saved-client","name":"Client conservé"},"company":{"name":"Pierre conservée","rc":"TEST-RC"},"items":[{"id":"saved-line","productId":"saved-product","product":{"name":"Pierre conservée","code":"SAVED"},"length":100,"width":100,"dimensionUnit":"CM","quantity":1,"surface":1,"unitPriceTtc":120,"tvaRate":0.2,"lineTotalHt":100,"lineTotalTva":20,"lineTotalTtc":120,"subtotalAfter":true,"createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00"}]}],
+  "bon-achat": [],
+  "payments": [{"id":"saved-payment","factureId":"saved-invoice","amount":60,"method":"ESPECE","date":"2026-10-16T00:00","createdAt":"2026-10-16T00:00","updatedAt":"2026-10-16T00:00"}]
+}
