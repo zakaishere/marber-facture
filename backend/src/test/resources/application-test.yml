@@ -5,5 +5,7 @@ spring:
     username: sa
     password:
 app:
+  health-ping:
+    enabled: false
   demo:
     enabled: false

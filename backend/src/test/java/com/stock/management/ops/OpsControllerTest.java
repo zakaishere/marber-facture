@@ -29,6 +29,9 @@ class OpsControllerTest {
     @MockBean
     private DataSource dataSource;
 
+    @MockBean
+    private com.stock.management.user.UserRepository users;
+
     @Test
     void pingReturnsAlivePayload() throws Exception {
         mockMvc.perform(get("/ping"))
