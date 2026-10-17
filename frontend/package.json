@@ -11,7 +11,8 @@
     "test:print": "esbuild tests/invoicePrintPrivacy.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/invoice-print-privacy-check.cjs && node ../tmp/invoice-print-privacy-check.cjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:stock-groups": "esbuild tests/stockGroups.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/stock-groups-check.cjs && node ../tmp/stock-groups-check.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

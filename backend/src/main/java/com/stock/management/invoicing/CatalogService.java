@@ -22,7 +22,9 @@ public class CatalogService {
         if(table.equals("products")&&!Input.text(q.get("categoryId")).isEmpty()) { sql+=" AND category_id=?"; args.add(q.get("categoryId")); }
         if(table.equals("products")&&"true".equals(q.get("lowStock")))sql+=" AND s.quantity<=s.alert_threshold";
         sql+=table.equals("products")?" ORDER BY products.name,products.id LIMIT ? OFFSET ?":" ORDER BY name,id LIMIT ? OFFSET ?"; args.add(Input.limit(q)); args.add((long)(Input.page(q)-1)*Input.limit(q));
-        return db.query(sql,args.toArray()).stream().map(row->enrich(table,row)).toList();
+        var rows=db.query(sql,args.toArray()).stream().map(row->enrich(table,row)).toList();
+        if(table.equals("products")&&"true".equals(q.get("stockDetails")))addStockDetails(rows);
+        return rows;
     }
     public Map<String,Object> get(String resource,String id) {
         var row=db.get(table(resource),id);
@@ -31,6 +33,45 @@ public class CatalogService {
     }
     private Map<String,Object> enrich(String table,Map<String,Object> row) {
         if(table.equals("products")) row.put("category",row.containsKey("categoryName")?Map.of("id",row.get("categoryId"),"name",row.remove("categoryName")):db.get("categories",row.get("categoryId").toString())); return row;
+    }
+    /** Batch ledger query: no per-article queries, and no changes to saved stock or documents. */
+    private void addStockDetails(List<Map<String,Object>> products) {
+        if(products.isEmpty())return;
+        String placeholders=String.join(",",Collections.nCopies(products.size(),"?"));
+        String sql="""
+            SELECT product_id,length_cm,width_cm,SUM(pieces) AS pieces,SUM(surface_m2) AS surface_m2
+            FROM (
+              SELECT l.product_id,
+                CASE WHEN l.dimension_unit='M' THEN l.length*100 ELSE l.length END AS length_cm,
+                CASE WHEN l.dimension_unit='M' THEN l.width*100 ELSE l.width END AS width_cm,
+                CAST(l.quantity AS BIGINT) AS pieces,l.surface*l.quantity AS surface_m2
+              FROM bon_achat_lines l JOIN bon_achats b ON b.id=l.bon_achat_id
+              WHERE b.status<>'CANCELLED' AND l.product_id IN (%s)
+              UNION ALL
+              SELECT l.product_id,
+                CASE WHEN l.dimension_unit='M' THEN l.length*100 ELSE l.length END,
+                CASE WHEN l.dimension_unit='M' THEN l.width*100 ELSE l.width END,
+                -CAST(l.quantity AS BIGINT),-l.surface*l.quantity
+              FROM facture_lines l JOIN factures f ON f.id=l.facture_id
+              WHERE l.product_id IN (%s)
+            ) movements
+            GROUP BY product_id,length_cm,width_cm
+            HAVING SUM(pieces)<>0 OR SUM(surface_m2)<>0
+            ORDER BY product_id,length_cm,width_cm
+            """.formatted(placeholders,placeholders);
+        List<Object> args=new ArrayList<>();
+        for(int copy=0;copy<2;copy++)for(var product:products)args.add(product.get("id"));
+        Map<String,List<Map<String,Object>>> dimensions=new HashMap<>();
+        for(var row:db.query(sql,args.toArray()))dimensions.computeIfAbsent(row.get("productId").toString(),key->new ArrayList<>()).add(row);
+        for(var product:products){
+            var rows=dimensions.getOrDefault(product.get("id").toString(),List.of());
+            product.put("stockDimensions",rows);
+            product.put("dimensionCount",rows.stream().filter(row->new BigDecimal(row.get("pieces").toString()).signum()>0).count());
+            product.put("stockPieces",rows.stream().map(row->new BigDecimal(row.get("pieces").toString())).reduce(BigDecimal.ZERO,BigDecimal::add));
+            BigDecimal surface=new BigDecimal(product.get("quantity").toString());
+            product.put("purchaseStockValue",LineCalculator.money(surface.multiply(new BigDecimal(product.get("lastPurchasePrice").toString()))).toPlainString());
+            product.put("saleStockValue",LineCalculator.money(surface.multiply(new BigDecimal(product.get("salePrice").toString()))).toPlainString());
+        }
     }
     @Transactional
     public Map<String,Object> save(String resource,String id,Map<String,Object> body) {

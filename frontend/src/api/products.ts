@@ -1,11 +1,23 @@
 import http from './http';
 
+export interface StockDimension {
+  lengthCm: number;
+  widthCm: number;
+  pieces: number;
+  surfaceM2: number;
+}
+
 export interface Product {
   id: string;
   code: string;
   name: string;
   quantity: number;
   minStock: number;
+  dimensionCount?: number;
+  stockPieces?: number;
+  stockDimensions?: StockDimension[];
+  purchaseStockValue?: string;
+  saleStockValue?: string;
   purchasedSurface: number;
   soldSurface: number;
   sold30Days: number;
@@ -62,6 +74,7 @@ export const getProducts = async (params?: {
   page?: number;
   limit?: number;
   lowStock?: boolean;
+  stockDetails?: boolean;
 }) => {
   const response = await http.get<Product[]>('/products', { params });
   return response.data;
