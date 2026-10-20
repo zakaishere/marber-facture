@@ -17,7 +17,6 @@ import ProductForm from "./pages/ProductForm";
 import BonAchatPage from "./pages/BonAchat";
 import BonAchatDetail from "./pages/BonAchatDetail";
 import BonAchatForm from "./pages/BonAchatForm";
-import FacturesPage from "./pages/Factures";
 import FactureDetail from "./pages/FactureDetail";
 import FactureForm from "./pages/FactureForm";
 import Suppliers from "./pages/Suppliers";

@@ -44,6 +44,7 @@ export default function Profile() {
     company_address: '',
     company_phone_fix: '',
     company_phone_mobile: '',
+    company_phone_whatsapp: '',
     company_email: '',
     company_rc: '',
     company_if: '',
@@ -63,6 +64,7 @@ export default function Profile() {
         company_address: user.company?.address || '',
         company_phone_fix: user.company?.phone_fix || '',
         company_phone_mobile: user.company?.phone_mobile || '',
+        company_phone_whatsapp: user.company?.phone_whatsapp || '',
         company_email: user.company?.email || '',
         company_rc: user.company?.rc || '',
         company_if: user.company?.if || '',
@@ -113,6 +115,7 @@ export default function Profile() {
         company_address: formData.company_address,
         company_phone_fix: formData.company_phone_fix,
         company_phone_mobile: formData.company_phone_mobile,
+        company_phone_whatsapp: formData.company_phone_whatsapp,
         company_email: formData.company_email,
         company_rc: formData.company_rc,
         company_if: formData.company_if,
@@ -305,6 +308,11 @@ export default function Profile() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="company_phone_whatsapp">WhatsApp</Label>
+              <Input id="company_phone_whatsapp" name="company_phone_whatsapp" maxLength={20} type="tel" value={formData.company_phone_whatsapp} onChange={handleChange} placeholder="06 00 63 00 43" disabled={saving} />
+              <p className="text-xs text-muted-foreground">Affiché dans le pied de page de vos nouveaux documents. À défaut, le numéro du modèle Arabic Stone est utilisé.</p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="company_email">Email</Label>
               <Input

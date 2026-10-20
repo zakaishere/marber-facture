@@ -62,7 +62,7 @@ For metres: `surface per piece = longueur × largeur`.
 `line HT = round(line TTC / (1 + TVA rate), 2)`.
 `line TVA = line TTC − line HT`.
 
-Amounts use decimal arithmetic in Spring, with HALF_UP rounding. Dimensions accept three decimal places; per-piece surface is stored with six decimal places. The server recalculates all saved totals. Invoice numbers are assigned automatically on creation using the original `YYMM###` monthly sequence; manual invoice numbers are ignored and an existing invoice keeps its number when edited. Documents preserve contact, company and article names so later catalogue edits do not alter them. There is no discount field in this minimal version.
+Amounts use decimal arithmetic in Spring, with HALF_UP rounding. Dimensions accept three decimal places; per-piece surface is stored with six decimal places. The server recalculates all saved totals. Invoice numbers use `NN-MM-YYYY` (for example `01-10-2026`), with a sequence starting at 01 for each selected invoice month/year and continuing to 100 after 99. The editor displays a read-only, non-reserving preview; the backend assigns the authoritative number under the existing transaction lock. Manual numbers are ignored. Edits keep existing numbers when the month/year stays the same (including legacy numbers); moving to a different month/year assigns its next number. Legacy counters, imported number maxima, and consumed numbers of deleted or moved invoices remain preserved. Purchase numbering is unchanged. Documents preserve contact, company and article names so later catalogue edits do not alter them. There is no discount field in this minimal version.
 
 The entry form includes searchable clients/articles, inline contact creation, a same-article/new-dimensions action (retaining width and price), row duplication, Enter-to-next-field navigation and a sticky totals/save bar. Optional declaration/payment fields are collapsed by default.
 
@@ -204,3 +204,37 @@ Restricted accounts create invoices using existing clients and articles, then vi
 Phone navigation includes a drawer and quick bottom tabs. Invoice and purchase lines use labelled cards on smaller screens and tables on wide desktop screens. Length and width always use centimetres, without a unit selector; all areas and prices remain in m². The mobile save bar stays available while entering lines.
 
 Stock, document histories, accounts and payment histories adapt to cards. Form controls have touch-sized targets, numeric keyboards, and readable input text; dialogs fit short/narrow screens and scroll vertically. The invoice preview fits the screen and offers a 100% zoom option. Printing and PDF export retain the original A4 content and pagination.
+
+### Invoice number preview
+
+Authenticated admin and invoicing accounts can request
+`GET /factures/number-preview?date=2026-10-20`. When editing, also pass
+`invoiceId=...` to preserve the original number for its existing month/year.
+The response contains `code`, `date`, and `preserved`; previews do not insert or
+update counters. The saved document response contains the actual assigned code.
+
+Numbering uses the existing `document_sequences` lock and `document_counters`
+table. New invoice periods are keyed as `MM-YYYY`; existing `YYMM` counters remain
+unchanged and contribute to the maximum. No schema migration or bulk renumbering
+is required. Numbers consumed before a counter existed and whose documents were
+already deleted cannot be reconstructed if no record of them remains.
+
+### Printed contact footer and location QR
+
+Invoices and purchase documents now include the saved client/supplier phone,
+address, and ICE when available. The existing stone/gold invoice theme remains.
+Each page repeats a bottom contact bar (WhatsApp, fixed/mobile phone, address),
+company legal details when present, page number, and a locally bundled QR image
+encoding `https://maps.app.goo.gl/XyUwF8YqNJuASxPQ6`. No QR service is contacted
+while viewing, printing, or exporting a document.
+
+The WhatsApp contact is editable in Profile. V9 adds a nullable company field;
+existing company data and saved document snapshots are preserved. Reference
+contact values from the supplied Arabic Stone sample are used only when an Arabic
+Stone company has no saved value. Saved contact values take precedence. The values
+and map link are centralized in `frontend/src/config/invoiceBranding.ts`.
+
+The previous print sources are backed up in
+`design-backups/invoice-before-contact-footer-2026-10-20/`, including original paths,
+a SHA-256 manifest, and restoration instructions. Example verification PDFs under
+`output/pdf/` use disposable demonstration data, not business records.

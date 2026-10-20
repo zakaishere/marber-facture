@@ -52,3 +52,6 @@
 **/.vscode
 **/.DS_Store
 **/Thumbs.db
+
+# Retained rollback sources are not needed to build the application.
+/design-backups

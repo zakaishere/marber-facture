@@ -7,6 +7,8 @@ export async function exportPdf(element: HTMLElement, filename: string) {
   clone.classList.add('pdf-export'); host.appendChild(clone); document.body.appendChild(host);
   try {
     await document.fonts.ready;
+    // Wait for the local location QR before capturing any page, including a first export.
+    await Promise.all(Array.from(clone.querySelectorAll('img')).map(image => image.decode()));
     await html2pdf().set({ filename, margin: 0, image: { type: 'jpeg', quality: .98 }, html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css'], after: '.fp-page:not(:last-child)' } }).from(clone).save();
   } finally { host.remove(); }
 }

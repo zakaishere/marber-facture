@@ -1,0 +1,9 @@
+{
+  "frontend/src/components/factures/FacturePreview.tsx": "d1cca0a35110eae4d90a259ede36e4021548393108609d55ba2c5a5784fb60fc",
+  "frontend/src/components/factures/FacturePreview.css": "b354bcd8f4d805067f86aa9313f2aa25797d7a63f398c1b77dd50ce0f1110025",
+  "frontend/src/models/facturePrintModel.ts": "7545a8a755362d939d537bb6f97321d662d4e04ee24464260a7c7b72317b6eb9",
+  "frontend/src/utils/facturePrintConverter.ts": "e21cea783d625d11c07e82360a5e51897ab9679643b6971f53b1f5d32607d486",
+  "frontend/src/components/StoneBrand.tsx": "083ddd3e9ebfe5d4315fc4516e1f087a7000e8f68abb78751dcf57ffe112212b",
+  "frontend/src/components/documents/DocumentDetail.tsx": "0e05f35ad3b175b41d766f9ae0498893d7e73ead635e18de4de5a0a09bee0a6b",
+  "frontend/src/utils/exportPdf.ts": "71f1660312c2ccc4b3bf76b27a48badb0e79c94189097d6e036de57a95b0fc5e"
+}

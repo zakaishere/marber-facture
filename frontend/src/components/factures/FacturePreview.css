@@ -31,3 +31,38 @@
 .fp-header .fp-document-title h1{margin-top:7px}
 .fp-header .fp-date{justify-self:end;padding-top:0}
 .fp-header .fp-date p{margin-top:10px}
+
+/* Contact stationery: original stone/gold theme, with a scannable local QR asset. */
+.fp-page .fp-footer{display:block;border-top:1px solid #bda77e;padding-top:10px;line-height:1.45;color:#625e54;break-inside:avoid;page-break-inside:avoid}
+.fp-footer .fp-footer-contacts{display:grid;grid-template-columns:.85fr .85fr .9fr 2.7fr;gap:12px;align-items:center}
+.fp-footer .fp-footer-contact{display:block;min-width:0}
+.fp-footer-contact>span,.fp-footer-address>span{display:block;color:#9a7c4c;text-transform:uppercase;letter-spacing:1.2px;font-size:6pt;font-weight:600;margin-bottom:6px}
+.fp-footer .fp-footer-contact p{font-size:7.2pt;white-space:normal;overflow-wrap:anywhere;margin:0}
+.fp-footer .fp-footer-location{display:flex;gap:10px;align-items:center;justify-content:flex-end;min-width:0;text-decoration:none;color:inherit}
+.fp-footer .fp-footer-address{display:block;text-align:right;min-width:0}
+.fp-footer .fp-footer-address p{white-space:normal;overflow-wrap:anywhere;font-size:7pt;line-height:1.5;margin:0}
+.fp-footer-address small{display:block;font-size:6.2pt;color:#938268;margin-top:5px}
+.fp-location-qr{width:84px;height:84px;flex-shrink:0;display:block;background:white;image-rendering:pixelated}
+.fp-footer .fp-footer-bottom{display:flex;gap:10px;justify-content:space-between;align-items:flex-end;margin-top:8px;padding-top:6px;border-top:1px solid #ede7db}
+.fp-footer .fp-footer-legal{display:flex;flex:1;flex-wrap:wrap;gap:2px 10px;font-size:6pt;line-height:1.5}
+.fp-footer .fp-footer-legal span{overflow-wrap:anywhere;max-width:100%}
+.fp-footer .fp-page-number{font-size:6.5pt;white-space:nowrap;flex-shrink:0}
+@media print{.fp-footer-location[href]::after{content:none!important}}
+
+/* Fit a short, reference-sized document on one A4 sheet with the full contact bar. */
+.fp-page-compact{padding-top:12mm;padding-bottom:8mm}
+.fp-page-compact .fp-header{padding-bottom:14px;margin-bottom:16px}
+.fp-page-compact .stone-brand-square{width:60px;height:60px}
+.fp-page-compact .fp-parties{margin-bottom:14px}
+.fp-page-compact .fp-issuer,.fp-page-compact .fp-contact{font-size:7.5pt;line-height:1.4}
+.fp-page-compact .fp-issuer>span,.fp-page-compact .fp-contact>span{margin-bottom:4px;font-size:6pt}
+.fp-page-compact .fp-issuer strong,.fp-page-compact .fp-contact strong{font-size:9.5pt;margin-bottom:3px}
+.fp-page-compact .fp-issuer p,.fp-page-compact .fp-contact p{margin:1px 0}
+.fp-page-compact .fp-ice{padding-top:3px}
+.fp-page-compact .fp-object{padding-bottom:7px;margin-bottom:10px}
+.fp-page-compact .fp-table th{padding:7px 5px}
+.fp-page-compact .fp-table td{padding:6px 5px}
+.fp-page.fp-page-compact .fp-summary{padding-top:16px}
+.fp-page-compact .fp-summary dl>div{padding:6px 8px}
+.fp-page-compact .fp-summary .fp-total{padding:9px 8px}
+.fp-page-compact .fp-location-qr{width:76px;height:76px}

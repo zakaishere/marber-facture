@@ -23,7 +23,8 @@ public class Store {
             for(char c:key.toCharArray()) { if(c=='_') upper=true; else {camel.append(upper?Character.toUpperCase(c):c); upper=false;} }
             Object value=rs.getObject(i);
             if(value instanceof Timestamp ts) value=ts.toLocalDateTime().toString();
-            else if(value instanceof java.sql.Date dt) value=dt.toString();
+            // Read SQL DATE as a calendar date, not through java.sql.Date's timezone-sensitive epoch.
+            else if(value instanceof java.sql.Date) value=rs.getObject(i,java.time.LocalDate.class).toString();
             row.put(camel.toString(),value);
         }
         return row;

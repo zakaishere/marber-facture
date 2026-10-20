@@ -48,3 +48,21 @@ The preview server was no longer running when work resumed. Entries made after t
 6. Run `backup-database.ps1`, then `verify-backup.ps1` on its resulting archive. The restore check uses a separate disposable database and never overwrites the working one.
 
 Backup tools are manual. No recurring backup job has been installed. Keep a private second copy on another device.
+
+## Invoice numbering update — 2026-10-20
+
+- Invoice format is now `NN-MM-YYYY`, based on the selected document date. Same-month/day-only edits retain the existing code, including legacy codes; month/year changes allocate the destination period's next code. Purchase numbering is unchanged.
+- A read-only preview endpoint never consumes counters. The frontend cancels obsolete date requests and ignores their results/errors; save responses and the document detail show the backend's actual assigned code.
+- Existing row locks and counters serialize allocations. Legacy counters and modern/legacy record maxima are respected. Editing or deleting an imported invoice preserves its consumed number even if its counter was missing. Existing records are not renumbered in bulk; no schema migration is needed.
+- SQL DATE values now use JDBC calendar-date conversion, fixing a timezone-sensitive month-boundary regression caught by the numbering tests.
+- Verified: 45 backend tests passed (numbering, concurrent creation/date edits, permissions, workflow, and stock), 3 frontend preview tests passed, TypeScript and production frontend build passed. Browser checks used disposable sample data and confirmed the read-only preview, month changes, legacy day-only preservation, and restoring the original number after returning to its month.
+- 15 PostgreSQL numbering/concurrency variants were skipped because a Docker engine was unavailable. Live PostgreSQL verification remains outstanding. No local or cloud business data was modified.
+
+## Invoice contact footer update - 2026-10-20
+
+- Preserved the existing stone/gold stationery and created a verified seven-file design backup at `design-backups/invoice-before-contact-footer-2026-10-20/` before editing.
+- Added client/supplier telephone, repeated contact footer with WhatsApp/fixed/mobile/address, existing legal identifiers, and a locally bundled QR encoding the exact supplied Google Maps URL. Saved contact values take precedence over the reference defaults for Arabic Stone.
+- Added an editable company WhatsApp field with a nullable V9 migration. New document snapshots include it; existing company data and document snapshots are preserved. Import/export retains the new field.
+- Verified 28 backend checks, 5 frontend print/footer checks, TypeScript, production build, and the fixture-only transfer script. The V8-to-V9 migration preservation test passed.
+- Exported and visually inspected a one-page A4 sample and the last page of an eight-page/48-line sample. Every page has a header/footer/QR, totals appear on the final page only, no page overflow was detected, and mobile preview preserves pagination. Decoded the QR from the exported sample and from the first/last rendered pages of the long PDF.
+- No real local or cloud business records were changed. PostgreSQL runtime deployment remains unverified locally because Docker is unavailable.

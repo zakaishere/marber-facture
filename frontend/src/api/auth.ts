@@ -18,6 +18,7 @@ export interface User {
     address?: string;
     phone_fix?: string;
     phone_mobile?: string;
+    phone_whatsapp?: string;
     email?: string;
     rc?: string;
     if?: string;
@@ -46,6 +47,7 @@ export interface UpdateProfileData {
   company_address?: string;
   company_phone_fix?: string;
   company_phone_mobile?: string;
+  company_phone_whatsapp?: string;
   company_email?: string;
   company_rc?: string;
   company_if?: string;

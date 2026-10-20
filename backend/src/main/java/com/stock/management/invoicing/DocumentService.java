@@ -145,9 +145,10 @@ public class DocumentService {
         String partyId=Input.required(merged,p+"Id",25);Map<String,Object> contact=db.get(p+"s",partyId);
         LocalDate date=Input.date(merged.get("date"));
         String code=Input.text(merged.get("code"));
-        if(!purchase)code=id==null?nextCode(false,date):old.get("code").toString();
-        else if(id==null&&code.isEmpty()||id!=null&&!body.containsKey("code")&&!date.toString().equals(old.get("date")))code=nextCode(true,date);
-        if(code.isEmpty()||code.length()>50)throw new BadRequestException("Numéro de document invalide");
+        if(purchase){
+            if(id==null&&code.isEmpty()||id!=null&&!body.containsKey("code")&&!date.toString().equals(old.get("date")))code=nextCode(true,date);
+            if(code.isEmpty()||code.length()>50)throw new BadRequestException("Numéro de document invalide");
+        }
         String method=method(purchase,merged.get("paymentMethod"));
         String status=purchase?Input.choice(merged.get("status"),"PENDING","PENDING","COMPLETED","CANCELLED"):Input.choice(merged.get("status"),"NOT_DECLARED","DECLARED","NOT_DECLARED");
         Object raw=body.containsKey("items")?body.get("items"):body.get("lines");
@@ -172,6 +173,12 @@ public class DocumentService {
         if(ttc.compareTo(new BigDecimal("999999999999.99"))>0)throw new BadRequestException("Total du document trop élevé");
         if(id!=null&&ttc.compareTo(paid(purchase,id))<0)throw new BadRequestException("Le total ne peut pas être inférieur aux paiements enregistrés");
         if(purchase&&status.equals("CANCELLED")&&id!=null&&paid(true,id).signum()>0)throw new BadRequestException("Corrigez les paiements avant d'annuler le bon");
+        // Allocate only after validating the request, and keep the sequence lock until commit.
+        if(!purchase){
+            if(id!=null)preserveInvoiceNumber(old.get("code").toString());
+            boolean sameMonth=id!=null&&YearMonth.from(Input.date(old.get("date"))).equals(YearMonth.from(date));
+            code=sameMonth?old.get("code").toString():nextCode(false,date);
+        }
         var affected=new HashSet<String>();for(var record:records)affected.add(record.get("product_id").toString());for(var line:prior.values())affected.add(line.get("productId").toString());
         var stockBefore=stock.lock(affected);
         Map<String,Object> header=new LinkedHashMap<>();header.put("code",code);header.put("date",date);header.put(p+"_id",partyId);header.put("status",status);header.put("payment_method",method);header.put("total_ht",ht);header.put("total_tva",tva);header.put(totalColumn(purchase),ttc);
@@ -181,11 +188,19 @@ public class DocumentService {
         header.put("company_snapshot",id!=null?old.get("companySnapshot"):encode(UserResponse.from(issuer).company()));
         if(!purchase&&id==null)header.put("created_by",userId);
         if(id==null)id=db.insert(table,header);else{db.update(table,id,header);db.jdbc.update("DELETE FROM "+lines(purchase)+" WHERE "+fk(purchase)+"=?",id);}
+        if(!purchase&&!old.isEmpty()&&!code.equals(old.get("code")))
+            db.jdbc.update("UPDATE payments SET reference=? WHERE facture_id=?",code,id);
         for(var record:records){record.put(fk(purchase),id);db.insert(lines(purchase),record);}
         stock.validate(stockBefore);
         return get(purchase,id);
     }
     private String nextCode(boolean purchase,LocalDate date){
+        if(!purchase){
+            lockInvoiceSequence();
+            int next=nextInvoiceSequence(date);
+            storeInvoiceCounter(invoicePeriod(date),next);
+            return invoiceCode(date,next);
+        }
         String kind=purchase?"PURCHASE":"FACTURE";
         db.query("SELECT kind FROM document_sequences WHERE kind=? FOR UPDATE",kind);
         String prefix=purchase?"BA-"+date.toString().replace("-","")+"-":String.format("%02d%02d",date.getYear()%100,date.getMonthValue());
@@ -203,11 +218,77 @@ public class DocumentService {
         db.jdbc.update("UPDATE document_counters SET last_value=? WHERE kind=? AND prefix=?",maximum+1,kind,prefix);
         return prefix+String.format(purchase?"%04d":"%03d",maximum+1);
     }
+    private String invoicePeriod(LocalDate date){
+        if(date.getYear()<1||date.getYear()>9999)throw new BadRequestException("Année de facture : de 0001 à 9999");
+        return String.format(Locale.ROOT,"%02d-%04d",date.getMonthValue(),date.getYear());
+    }
+    private String legacyInvoicePeriod(LocalDate date){return String.format(Locale.ROOT,"%02d%02d",date.getYear()%100,date.getMonthValue());}
+    private String invoiceCode(LocalDate date,int sequence){return String.format(Locale.ROOT,"%02d-%s",sequence,invoicePeriod(date));}
+    private void lockInvoiceSequence(){db.query("SELECT kind FROM document_sequences WHERE kind='FACTURE' FOR UPDATE");}
+    private int counterMaximum(String... periods){
+        int maximum=0;
+        for(String period:periods){
+            var rows=db.query("SELECT last_value FROM document_counters WHERE kind='FACTURE' AND prefix=?",period);
+            if(!rows.isEmpty())maximum=Math.max(maximum,((Number)rows.getFirst().get("lastValue")).intValue());
+        }
+        return maximum;
+    }
+    private int parsedInvoiceSequence(String value){
+        // Never silently ignore an oversized historic number and then reuse a lower number.
+        BigInteger sequence=new BigInteger(value);
+        if(sequence.compareTo(BigInteger.valueOf(Integer.MAX_VALUE))>0)throw new BadRequestException("Séquence de factures épuisée");
+        return sequence.intValue();
+    }
+    private int nextInvoiceSequence(LocalDate date){
+        String period=invoicePeriod(date),legacy=legacyInvoicePeriod(date);
+        int maximum=counterMaximum(period,legacy);
+        var modernPattern=java.util.regex.Pattern.compile("^([0-9]+)-"+period+"$");
+        var legacyPattern=java.util.regex.Pattern.compile("^"+legacy+"([0-9]+)$");
+        // Inspect both formats even when a counter exists: imported records may be ahead of it.
+        for(var row:db.query("SELECT code FROM factures WHERE code LIKE ? OR code LIKE ?","%-"+period,legacy+"%")){
+            String code=row.get("code").toString();
+            var modern=modernPattern.matcher(code);var old=legacyPattern.matcher(code);
+            if(modern.matches())maximum=Math.max(maximum,parsedInvoiceSequence(modern.group(1)));
+            else if(old.matches())maximum=Math.max(maximum,parsedInvoiceSequence(old.group(1)));
+        }
+        if(maximum==Integer.MAX_VALUE)throw new BadRequestException("Séquence de factures épuisée");
+        return maximum+1;
+    }
+    private void storeInvoiceCounter(String period,int value){
+        // Caller holds document_sequences/FACTURE, including when bootstrapping a missing month.
+        if(db.jdbc.update("UPDATE document_counters SET last_value=CASE WHEN last_value<? THEN ? ELSE last_value END WHERE kind='FACTURE' AND prefix=?",value,value,period)==0)
+            db.jdbc.update("INSERT INTO document_counters(kind,prefix,last_value) VALUES ('FACTURE',?,?)",period,value);
+    }
+    private void preserveInvoiceNumber(String code){
+        var modern=java.util.regex.Pattern.compile("^([0-9]+)-([0-9]{2})-([0-9]{4})$").matcher(code);
+        var legacy=java.util.regex.Pattern.compile("^([0-9]{2})(0[1-9]|1[0-2])([0-9]+)$").matcher(code);
+        if(modern.matches()){
+            int month=Integer.parseInt(modern.group(2)),year=Integer.parseInt(modern.group(3));
+            if(month<1||month>12||year<1)return;
+            lockInvoiceSequence();storeInvoiceCounter(modern.group(2)+"-"+modern.group(3),parsedInvoiceSequence(modern.group(1)));
+        }else if(legacy.matches()){
+            // Retain the actual encoded period, even if a legacy invoice's date was previously edited.
+            lockInvoiceSequence();storeInvoiceCounter(legacy.group(1)+legacy.group(2),parsedInvoiceSequence(legacy.group(3)));
+        }
+    }
+    @Transactional(readOnly=true,isolation=Isolation.REPEATABLE_READ)
+    public Map<String,Object> invoiceNumberPreview(String suppliedDate,String invoiceId){
+        if(Input.text(suppliedDate).isEmpty())throw new BadRequestException("Choisissez la date de facture");
+        LocalDate date=Input.date(suppliedDate);invoicePeriod(date);
+        if(!Input.text(invoiceId).isEmpty()){
+            var invoice=db.get("factures",invoiceId);
+            if(YearMonth.from(Input.date(invoice.get("date"))).equals(YearMonth.from(date)))
+                return Map.of("code",invoice.get("code"),"date",date.toString(),"preserved",true);
+        }
+        // No row lock, insert, or update here: previews are advisory and never reserve a number.
+        return Map.of("code",invoiceCode(date,nextInvoiceSequence(date)),"date",date.toString(),"preserved",false);
+    }
     private String method(boolean purchase,Object input){return purchase?Input.choice(input,"CASH","CASH","BANK_TRANSFER","CHECK","CREDIT_CARD"):Input.choice(input,null,"ESPECE","VIREMENT","CHEQUE","LCN");}
     private BigDecimal paid(boolean purchase,String id){return db.jdbc.queryForObject("SELECT COALESCE(SUM(amount),0) FROM payments WHERE "+fk(purchase)+"=?",BigDecimal.class,id);}
     @Transactional
     public void delete(boolean purchase,String id){
-        db.lock(table(purchase),id);if(paid(purchase,id).signum()>0)throw new ConflictException("Un document avec paiements ne peut pas être supprimé");
+        var document=db.lock(table(purchase),id);if(paid(purchase,id).signum()>0)throw new ConflictException("Un document avec paiements ne peut pas être supprimé");
+        if(!purchase)preserveInvoiceNumber(document.get("code").toString());
         var ids=db.query("SELECT DISTINCT product_id FROM "+lines(purchase)+" WHERE "+fk(purchase)+"=?",id).stream().map(row->row.get("productId").toString()).toList();
         var before=stock.lock(ids);db.jdbc.update("DELETE FROM "+table(purchase)+" WHERE id=?",id);stock.validate(before);
     }

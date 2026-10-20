@@ -12,6 +12,7 @@ export interface FactureItem {
 }
 
 export interface FactureCompany {
+  phone_whatsapp?: string;
   rib?: string;
   name: string;
   activity: string;
@@ -40,6 +41,7 @@ export interface FactureInvoiceInfo {
 }
 
 export interface FactureClient {
+  phone?: string;
   name: string;
   city: string;
   ice: string;

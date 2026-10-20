@@ -13,6 +13,7 @@ public record CompanyResponse(
     @JsonProperty("if") String ifNumber,
     String patente,
     String cnss,
-    String ice
+    String ice,
+    @JsonProperty("phone_whatsapp") String phoneWhatsapp
 ) {
 }

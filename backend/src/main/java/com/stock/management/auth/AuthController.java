@@ -45,6 +45,7 @@ public class AuthController {
         if(b.containsKey("company_address"))u.setCompanyAddress(Input.optional(b.get("company_address"),2000));
         if(b.containsKey("company_phone_fix"))u.setCompanyPhoneFix(Input.optional(b.get("company_phone_fix"),20));
         if(b.containsKey("company_phone_mobile"))u.setCompanyPhoneMobile(Input.optional(b.get("company_phone_mobile"),20));
+        if(b.containsKey("company_phone_whatsapp"))u.setCompanyPhoneWhatsapp(Input.optional(b.get("company_phone_whatsapp"),20));
         if(b.containsKey("company_email"))u.setCompanyEmail(Input.optional(b.get("company_email"),255));
         if(b.containsKey("company_rc"))u.setCompanyRc(Input.optional(b.get("company_rc"),50));
         if(b.containsKey("company_if"))u.setCompanyIf(Input.optional(b.get("company_if"),50));

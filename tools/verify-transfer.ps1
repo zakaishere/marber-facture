@@ -3,7 +3,7 @@ $ErrorActionPreference='Stop'
 $appRoot=Split-Path $PSScriptRoot -Parent
 $folder=Join-Path $appRoot ('backups/transfer-check-'+[Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $folder|Out-Null
-$profile=[pscustomobject]@{id='test-admin';username='admin';company=[pscustomobject]@{name="Pierre d'Atlas";activity='Marbre';address='Tanger';phone_fix='0539000000';phone_mobile='';email='test@example.test';rc='TEST';if='TEST';ice='001234567890123';patente='';cnss=''}}
+$profile=[pscustomobject]@{id='test-admin';username='admin';company=[pscustomobject]@{name="Pierre d'Atlas";activity='Marbre';address='Tanger';phone_fix='0539000000';phone_mobile='';phone_whatsapp='0600630043';email='test@example.test';rc='TEST';if='TEST';ice='001234567890123';patente='';cnss=''}}
 $client=[pscustomobject]@{id='test-client';name='Client test';phone='';address='Tanger';ice='';createdAt='2026-10-16T01:00:00';updatedAt='2026-10-16T01:00:00'}
 $category=[pscustomobject]@{id='test-category';name='Marbre';createdAt=$client.createdAt;updatedAt=$client.updatedAt}
 $product=[pscustomobject]@{id='test-product';name='Marbre';code='TEST';categoryId=$category.id;salePrice=120;lastPurchasePrice=100;tvaRate=0.2;quantity=0;minStock=0;createdAt=$client.createdAt;updatedAt=$client.updatedAt}
@@ -28,6 +28,7 @@ try{
     & (Join-Path $appRoot 'import-preview.ps1') -SnapshotFile $file.FullName -PrepareOnly -OutputDirectory $folder
     $sqlFile=Get-ChildItem -LiteralPath $folder -Filter '*.sql'|Select-Object -First 1
     $sql=Get-Content -LiteralPath $sqlFile.FullName -Raw
+    if(-not $sql.Contains("company_phone_whatsapp='0600630043'")){throw 'WhatsApp contact missing from transfer SQL'}
     if(([regex]::Matches($sql,'INSERT INTO payments ')).Count -ne 3 -or -not $sql.Contains("Pierre d''Atlas") -or -not $sql.Contains('BEGIN;') -or -not $sql.Contains('COMMIT;')){throw 'Import SQL fidelity check failed'}
     $saved.payments=@(@($saved.payments));$saved.payments[0]=$null
     $invalid=Join-Path $folder 'invalid.json';$saved|ConvertTo-Json -Depth 40|Set-Content -LiteralPath $invalid -Encoding utf8

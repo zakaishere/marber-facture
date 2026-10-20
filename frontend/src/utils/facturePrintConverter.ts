@@ -15,7 +15,7 @@ export function convertFactureToPrintModel(facture: PrintableFacture, user: User
       paid_amount: Number(facture.paidAmount || 0), amount_to_pay: Number(facture.remainingAmount ?? facture.totalTtc),
       amount_in_words: numberToFrenchWords(Number(facture.totalTtc)),
     },
-    client: { name: facture.client?.name || '', city: facture.client?.address || '', ice: facture.client?.ice || '' },
+    client: { name: facture.client?.name || '', city: facture.client?.address || '', ice: facture.client?.ice || '', phone: facture.client?.phone || '' },
     currency: 'MAD',
     items: (facture.items || []).map(item => ({
       designation: item.product?.name || '', quantity: Number(item.quantity), length: Number(item.length), width: Number(item.width),

@@ -40,6 +40,7 @@ class InvoicingAccountsTest {
         var own=call("POST","/factures",body,201);String id=own.get("id").asText();
         assertThat(own.get("company").get("name").asText()).isEqualTo("ARABIC STONE");
         assertThat(own.has("notes")).isFalse();assertThat(own.get("createdBy").asText()).isEqualTo(account.get("id").asText());
+        assertThat(call("GET","/factures/number-preview?date=2181-09-01",null,200).get("code").asText()).isEqualTo("01-09-2181");
         call("GET","/factures/"+id,null,200);call("GET","/factures/by-code/"+own.get("code").asText(),null,200);
         assertThat(call("GET","/factures/"+adminId,null,200).has("notes")).isFalse();call("GET","/factures/by-code/"+adminInvoice.get("code").asText(),null,200);
         assertThat(call("GET","/factures?paged=true&createdBy="+adminInvoice.get("createdBy").asText(),null,200).get("total").asInt()).isEqualTo(2);

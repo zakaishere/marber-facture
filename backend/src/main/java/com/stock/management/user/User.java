@@ -45,6 +45,12 @@ public class User extends BaseEntity {
     @Column(name = "company_phone_mobile", length = 20)
     private String companyPhoneMobile;
 
+    @Column(name = "company_phone_whatsapp", length = 20)
+    private String companyPhoneWhatsapp;
+
+    public String getCompanyPhoneWhatsapp(){return companyPhoneWhatsapp;}
+    public void setCompanyPhoneWhatsapp(String value){companyPhoneWhatsapp=value;}
+
     @Column(name = "company_email", length = 255)
     private String companyEmail;
 

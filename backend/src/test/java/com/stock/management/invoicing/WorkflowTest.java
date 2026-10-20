@@ -199,10 +199,20 @@ class WorkflowTest {
     @Test void invoiceNumbersAreAutomaticMonthlyAndCannotBeOverridden()throws Exception{
         var body=new HashMap<String,Object>();body.put("clientId",client);body.put("date","2099-01-10");body.put("code","MANUAL-NUMBER");body.put("items",List.of(line(product,100,100,1,200,false,false)));
         var first=call("POST","/factures",body,201);var next=call("POST","/factures",body,201);
-        assertThat(first.get("code").asText()).isEqualTo("9901001");assertThat(next.get("code").asText()).isEqualTo("9901002");
+        assertThat(first.get("code").asText()).isEqualTo("01-01-2099");assertThat(next.get("code").asText()).isEqualTo("02-01-2099");
         var edited=call("PUT","/factures/"+first.get("id").asText(),Map.of("code","OVERRIDE","date","2099-02-10"),200);
-        assertThat(edited.get("code").asText()).isEqualTo("9901001");
-        body.put("date","2099-02-10");assertThat(call("POST","/factures",body,201).get("code").asText()).isEqualTo("9902001");
+        assertThat(edited.get("code").asText()).isEqualTo("01-02-2099");
+        body.put("date","2099-02-10");assertThat(call("POST","/factures",body,201).get("code").asText()).isEqualTo("02-02-2099");
+    }
+    @Test void numberPreviewRequiresLoginValidatesDatesAndDoesNotReserve()throws Exception{
+        mvc.perform(get("/factures/number-preview").param("date","2180-12-01")).andExpect(status().isUnauthorized());
+        var first=call("GET","/factures/number-preview?date=2180-12-01",null,200);
+        assertThat(first.get("code").asText()).isEqualTo("01-12-2180");
+        assertThat(call("GET","/factures/number-preview?date=2180-12-02",null,200).get("code")).isEqualTo(first.get("code"));
+        call("POST","/factures",Map.of("clientId",client,"date","2180-12-01","items",List.of()),400);
+        assertThat(call("GET","/factures/number-preview?date=2180-12-02",null,200).get("code")).isEqualTo(first.get("code"));
+        call("GET","/factures/number-preview?date=invalid",null,400);
+        call("GET","/factures/number-preview",null,400);
     }
     @Test void vatIsAlwaysTwentyPercentEvenWithDifferentCatalogDefaults()throws Exception{
         call("PUT","/products/"+product,Map.of("tvaPercent",10),400);
@@ -215,10 +225,12 @@ class WorkflowTest {
 
     @Test void companyProfilePersistsAndOnlyNewDocumentsUseTheNewDetails()throws Exception{
         var before=invoice(line(product,100,100,1,120,false,false));
-        var settings=new HashMap<String,Object>();settings.put("company_name","Pierre Société");settings.put("company_address","Adresse de test Tanger");settings.put("company_phone_fix","0539000000");settings.put("company_phone_mobile","0661000000");settings.put("company_email","test@example.test");settings.put("company_rc","RC-TEST");settings.put("company_if","IF-TEST");settings.put("company_ice","001234567890123");settings.put("company_patente","PAT-TEST");settings.put("company_cnss","CNSS-TEST");
+        var settings=new HashMap<String,Object>();settings.put("company_name","Pierre Société");settings.put("company_address","Adresse de test Tanger");settings.put("company_phone_fix","0539000000");settings.put("company_phone_mobile","0661000000");settings.put("company_phone_whatsapp","0600630043");settings.put("company_email","test@example.test");settings.put("company_rc","RC-TEST");settings.put("company_if","IF-TEST");settings.put("company_ice","001234567890123");settings.put("company_patente","PAT-TEST");settings.put("company_cnss","CNSS-TEST");
         call("PUT","/auth/profile",settings,200);
-        var profile=call("GET","/auth/verify",null,200).at("/user/company");assertThat(profile.get("phone_fix").asText()).isEqualTo("0539000000");assertThat(profile.get("ice").asText()).isEqualTo("001234567890123");
-        var after=invoice(line(product,100,100,1,120,false,false));assertThat(after.at("/company/rc").asText()).isEqualTo("RC-TEST");
+        var profile=call("GET","/auth/verify",null,200).at("/user/company");assertThat(profile.get("phone_fix").asText()).isEqualTo("0539000000");assertThat(profile.get("ice").asText()).isEqualTo("001234567890123");assertThat(profile.get("phone_whatsapp").asText()).isEqualTo("0600630043");
+        var after=invoice(line(product,100,100,1,120,false,false));assertThat(after.at("/company/rc").asText()).isEqualTo("RC-TEST");assertThat(after.at("/company/phone_whatsapp").asText()).isEqualTo("0600630043");
+        assertThat(call("GET","/factures/"+before.get("id").asText(),null,200).at("/company/phone_whatsapp").isNull()).isTrue();
+        call("PUT","/auth/profile",Map.of("company_phone_whatsapp","1".repeat(21)),400);
         assertThat(call("GET","/factures/"+before.get("id").asText(),null,200).at("/company/name").asText()).isEqualTo("ARABIC STONE");
         call("PUT","/auth/profile",Map.of("username","renamed-admin"),200);seed.run(null);
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM users",Long.class)).isEqualTo(1);
@@ -227,7 +239,7 @@ class WorkflowTest {
     @Test void numbersAreNotReusedAfterDeletingLastInvoice()throws Exception{
         var body=Map.of("clientId",client,"date","2098-03-10","items",List.of(line(product,100,100,1,120,false,false)));
         var first=call("POST","/factures",body,201);call("DELETE","/factures/"+first.get("id").asText(),null,204);
-        assertThat(call("POST","/factures",body,201).get("code").asText()).isEqualTo("9803002");
+        assertThat(call("POST","/factures",body,201).get("code").asText()).isEqualTo("02-03-2098");
     }
     @Test void dashboardAndPagedHistoryIncludeMoreThanTenThousandDocuments()throws Exception{
         var original=invoice(line(product,100,100,1,120,false,false));String id=original.get("id").asText();

@@ -71,7 +71,7 @@ public class LocalDataService {
         for(boolean purchase:List.of(false,true))for(var row:rows(source,purchase?"bon-achat":"factures")){
             BigDecimal paid=db.jdbc.queryForObject("SELECT COALESCE(SUM(amount),0) FROM payments WHERE "+(purchase?"bon_achat_id":"facture_id")+"=?",BigDecimal.class,row.get("id"));if(paid.compareTo(Input.decimal(row.get("paidAmount"),"Paiements"))!=0||paid.compareTo(Input.decimal(row.get(purchase?"totalAmount":"totalTtc"),"Total"))>0)throw new BadRequestException("Paiements incohérents");
         }
-        if(source.get("profile") instanceof Map<?,?> profile&&profile.get("company") instanceof Map<?,?> company){var values=new LinkedHashMap<String,Object>();for(String field:List.of("name","activity","address","phone_fix","phone_mobile","email","rc","if","patente","cnss","ice"))values.put("company_"+field,company.get(field));db.update("users",userId,values);}
+        if(source.get("profile") instanceof Map<?,?> profile&&profile.get("company") instanceof Map<?,?> company){var values=new LinkedHashMap<String,Object>();for(String field:List.of("name","activity","address","phone_fix","phone_mobile","phone_whatsapp","email","rc","if","patente","cnss","ice"))values.put("company_"+field,company.get(field));db.update("users",userId,values);}
         return Map.of("documents",documents,"lines",lineCount,"payments",payments.size(),"message","Données importées");
     }
 }

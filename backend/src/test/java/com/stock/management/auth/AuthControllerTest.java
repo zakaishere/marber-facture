@@ -40,7 +40,7 @@ class AuthControllerTest {
 
     @Test
     void loginReturnsTokenAndUser() throws Exception {
-        CompanyResponse company = new CompanyResponse("ACME", null, null, null, null, null, null, null, null, null, null);
+        CompanyResponse company = new CompanyResponse("ACME", null, null, null, null, null, null, null, null, null, null, null);
         UserResponse user = new UserResponse("id-1", "alice", "ROLE_ADMIN", company);
         when(authService.login(any())).thenReturn(new LoginResponse("Login successful", "jwt-token", user));
 

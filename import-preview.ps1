@@ -38,7 +38,7 @@ foreach($resource in @('factures','bon-achat')){
 }
 foreach($row in $snapshot.payments){$values=Base-Row $row;foreach($mapping in @(@('facture_id','factureId'),@('bon_achat_id','bonAchatId'),@('amount','amount'),@('method','method'),@('date','date'),@('note','note'),@('reference','reference'))){$values[$mapping[0]]=$row.($mapping[1])};Add-Row 'payments' $values}
 $company=$snapshot.profile.company
-$assignments=@(foreach($field in @('name','activity','address','phone_fix','phone_mobile','email','rc','if','patente','cnss','ice')){"company_$field="+(Sql-Literal $company.$field)}) -join ','
+$assignments=@(foreach($field in @('name','activity','address','phone_fix','phone_mobile','phone_whatsapp','email','rc','if','patente','cnss','ice')){"company_$field="+(Sql-Literal $company.$field)}) -join ','
 $sql.Add("UPDATE users SET $assignments;")
 $sql.Add('COMMIT;')
 $folder=$OutputDirectory;New-Item -ItemType Directory -Force -Path $folder|Out-Null

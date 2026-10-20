@@ -32,6 +32,41 @@ class ConcurrentWritesTest {
             assertThat(codes).hasSize(12);
         }finally{executor.shutdownNow();}
     }
+    @Test void simultaneousPreviewsDoNotReserveAndCreatesUseTheFinalMonthlySequence()throws Exception{
+        var body=new HashMap<>(body());body.put("date","2182-05-10");
+        String user=users.findByUsername("admin").orElseThrow().getId();
+        var executor=Executors.newFixedThreadPool(4);var ready=new CountDownLatch(4);var start=new CountDownLatch(1);
+        var previews=new ConcurrentLinkedQueue<String>();
+        try{
+            var tasks=new ArrayList<Future<Map<String,Object>>>();
+            for(int i=0;i<12;i++)tasks.add(executor.submit(()->{
+                previews.add(documents.invoiceNumberPreview("2182-05-10",null).get("code").toString());ready.countDown();
+                if(!start.await(10,TimeUnit.SECONDS))throw new IllegalStateException("Start timeout");
+                return documents.save(false,null,body,user);
+            }));
+            assertThat(ready.await(10,TimeUnit.SECONDS)).isTrue();
+            assertThat(previews).containsOnly("01-05-2182");start.countDown();
+            var codes=new HashSet<String>();for(var task:tasks){var invoice=task.get(30,TimeUnit.SECONDS);codes.add(invoice.get("code").toString());assertThat((List<?>)invoice.get("items")).hasSize(1);}
+            var expected=new HashSet<String>();for(int i=1;i<=12;i++)expected.add(String.format("%02d-05-2182",i));
+            assertThat(codes).isEqualTo(expected);
+            assertThat(documents.invoiceNumberPreview("2182-05-20",null).get("code")).isEqualTo("13-05-2182");
+        }finally{start.countDown();executor.shutdownNow();}
+    }
+    @Test void concurrentMonthChangesAssignDifferentNumbersAndKeepTheOldCounter()throws Exception{
+        var body=new HashMap<>(body());body.put("date","2183-04-01");
+        String user=users.findByUsername("admin").orElseThrow().getId();
+        String first=documents.save(false,null,body,user).get("id").toString();
+        String second=documents.save(false,null,body,user).get("id").toString();
+        var executor=Executors.newFixedThreadPool(2);var gate=new CountDownLatch(1);
+        try{
+            var a=executor.submit(()->{gate.await();return documents.save(false,first,Map.of("date","2183-06-01"),user);});
+            var b=executor.submit(()->{gate.await();return documents.save(false,second,Map.of("date","2183-06-20"),user);});
+            gate.countDown();
+            assertThat(List.of(a.get(30,TimeUnit.SECONDS).get("code"),b.get(30,TimeUnit.SECONDS).get("code")))
+                .containsExactlyInAnyOrder("01-06-2183","02-06-2183");
+            assertThat(documents.invoiceNumberPreview("2183-04-10",null).get("code")).isEqualTo("03-04-2183");
+        }finally{gate.countDown();executor.shutdownNow();}
+    }
     @Test void simultaneousPaymentsCannotOverpay()throws Exception{
         String user=users.findByUsername("admin").orElseThrow().getId();String id=documents.save(false,null,body(),user).get("id").toString();
         ExecutorService executor=Executors.newFixedThreadPool(2);

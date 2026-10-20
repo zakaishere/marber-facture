@@ -10,6 +10,7 @@ public class DocumentController {
     private final DocumentService service;
     public DocumentController(DocumentService service){this.service=service;}
     @GetMapping("/invoice-options") public Map<String,Object> invoiceOptions(){return service.invoiceOptions();}
+    @GetMapping("/factures/number-preview") public Map<String,Object> numberPreview(@RequestParam(required=false) String date,@RequestParam(required=false) String invoiceId){return service.invoiceNumberPreview(date,invoiceId);}
     private boolean purchase(String resource){return resource.equals("bon-achat");}
     @GetMapping("/{resource:factures|bon-achat}") public Object list(@PathVariable String resource,@RequestParam Map<String,String> q){return "true".equals(q.get("paged"))?service.page(purchase(resource),q):service.list(purchase(resource),q);}
     @GetMapping("/{resource:factures|bon-achat}/{id}") public Map<String,Object> get(@PathVariable String resource,@PathVariable String id){return service.get(purchase(resource),id);}

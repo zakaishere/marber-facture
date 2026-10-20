@@ -16,7 +16,8 @@ public record UserResponse(String id, String username, String role, CompanyRespo
             user.getCompanyIf(),
             user.getCompanyPatente(),
             user.getCompanyCnss(),
-            user.getCompanyIce()
+            user.getCompanyIce(),
+            user.getCompanyPhoneWhatsapp()
         );
         return new UserResponse(user.getId(), user.getUsername(), user.getRole().name(), company);
     }
