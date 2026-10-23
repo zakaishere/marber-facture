@@ -62,6 +62,14 @@ public class DocumentService {
         String id=header.get("id").toString();
         header.put(party(purchase),decode(header.remove(party(purchase)+"Snapshot")));
         header.put("company",decode(header.remove("companySnapshot")));
+        if(!purchase){
+            var auth=org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            String creatorId=Input.text(header.get("createdBy"));
+            if(creatorId.isBlank()&&auth!=null)creatorId=auth.getName();
+            var creator=users.findById(creatorId);
+            var issuer=creator.flatMap(u->u.getOwnerAdminId()==null?Optional.of(u):users.findById(u.getOwnerAdminId()));
+            header.put("printCompany",issuer.<Object>map(u->UserResponse.from(u).company()).orElse(header.get("company")));
+        }
         var items=db.query("SELECT * FROM "+lines(purchase)+" WHERE "+fk(purchase)+"=? ORDER BY position",id);
         for(var line:items){
             line.put("product",Map.of("id",line.get("productId"),"name",line.remove("productName"),"code",line.remove("productCode")));

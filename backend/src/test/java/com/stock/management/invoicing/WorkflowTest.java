@@ -236,6 +236,21 @@ class WorkflowTest {
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM users",Long.class)).isEqualTo(1);
         call("GET","/auth/verify",null,200);
     }
+    @Test void currentPrintCompanyFollowsSettingsWithoutChangingTheHistoricalInvoice()throws Exception{
+        var before=invoice(line(product,100,100,1,120,false,false));String url="/factures/"+before.get("id").asText();
+        var oldCompany=before.get("company");var oldClient=before.get("client");
+        call("PUT","/auth/profile",Map.of("company_name","Stone Company Updated","company_address","New address","company_ice","001234567890123","company_phone_mobile","0661000022"),200);
+        var after=call("GET",url,null,200);
+        assertThat(after.at("/printCompany/name").asText()).isEqualTo("Stone Company Updated");
+        assertThat(after.at("/printCompany/address").asText()).isEqualTo("New address");
+        assertThat(after.at("/printCompany/phone_mobile").asText()).isEqualTo("0661000022");
+        assertThat(after.at("/printCompany/ice").asText()).isEqualTo("001234567890123");
+        assertThat(after.get("company")).isEqualTo(oldCompany);assertThat(after.get("client")).isEqualTo(oldClient);
+        for(String key:List.of("items","code","date","totalHt","totalTva","totalTtc"))assertThat(after.get(key)).isEqualTo(before.get(key));
+        assertThat(after.get("printCompany").toString()).doesNotContain("password","token");
+        jdbc.update("UPDATE factures SET created_by=NULL WHERE id=?",before.get("id").asText());
+        assertThat(call("GET",url,null,200).at("/printCompany/name").asText()).isEqualTo("Stone Company Updated");
+    }
     @Test void numbersAreNotReusedAfterDeletingLastInvoice()throws Exception{
         var body=Map.of("clientId",client,"date","2098-03-10","items",List.of(line(product,100,100,1,120,false,false)));
         var first=call("POST","/factures",body,201);call("DELETE","/factures/"+first.get("id").asText(),null,204);

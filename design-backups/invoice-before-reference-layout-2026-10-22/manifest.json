@@ -1,0 +1,8 @@
+{
+  "frontend/src/components/factures/FacturePreview.tsx": "7d4252581692ea78d3b49b554da6be21d0d71c720d2967e3816daca1a0e384d8",
+  "frontend/src/components/factures/FacturePreview.css": "a2a1ca48fa2a62ec75aa07e7f77a7ca20c3c8e0d30b1575db5aa3e0abfecf039",
+  "frontend/src/utils/facturePrintConverter.ts": "7a81637ae397a79a15854a8b0975dccd2482d50fa9012ac3cf52885ced4d49de",
+  "frontend/src/models/facturePrintModel.ts": "9b66cacddc39d7fe60bec911a10b81456f67703cb4b90da94b064e5c594b4c0b",
+  "frontend/src/components/documents/DocumentDetail.tsx": "0e05f35ad3b175b41d766f9ae0498893d7e73ead635e18de4de5a0a09bee0a6b",
+  "frontend/src/utils/exportPdf.ts": "4b92b7fe5082fe0e1ae19616c0d9aa879b60f52066acb2ce3430cb7ee687fc11"
+}

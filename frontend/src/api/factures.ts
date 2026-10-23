@@ -3,6 +3,8 @@ import http from './http';
 export interface Facture {
   notes?: string | null;
   company?: import('@/models/facturePrintModel').FactureCompany;
+  /** Current issuer settings for printing; company remains the historical snapshot. */
+  printCompany?: import('@/models/facturePrintModel').FactureCompany;
   paidAmount?: number;
   remainingAmount?: number;
   id: string;

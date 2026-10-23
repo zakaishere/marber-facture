@@ -3,9 +3,9 @@ import type { FacturePrintModel, FactureCompany } from '@/models/facturePrintMod
 import type { User } from '@/api/auth';
 import { numberToFrenchWords } from '@/utils/numberToWords';
 
-type PrintableFacture = Pick<Facture, 'company' | 'date' | 'code' | 'totalHt' | 'totalTva' | 'totalTtc' | 'paidAmount' | 'remainingAmount' | 'client'> & { paymentMethod?: string | null; items?: Partial<FactureLine>[] };
+type PrintableFacture = Pick<Facture, 'company' | 'date' | 'code' | 'totalHt' | 'totalTva' | 'totalTtc' | 'paidAmount' | 'remainingAmount' | 'client'> & { paymentMethod?: string | null; items?: Partial<FactureLine>[]; printCompany?: Partial<FactureCompany> };
 export function convertFactureToPrintModel(facture: PrintableFacture, user: User | null = null): FacturePrintModel {
-  const company = facture.company || user?.company || {};
+  const company = facture.printCompany || facture.company || user?.company || {};
   const companyData: FactureCompany = { name: '', activity: '', address: '', phone_fix: '', phone_mobile: '', ...company };
   return {
     company: companyData,

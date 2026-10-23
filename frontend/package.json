@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "test:stock-groups": "esbuild tests/stockGroups.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/stock-groups-check.cjs && node ../tmp/stock-groups-check.cjs",
     "test:invoice-number": "esbuild tests/invoiceNumberPreview.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/invoice-number-check.cjs && node ../tmp/invoice-number-check.cjs",
-    "test:invoice-footer": "esbuild tests/invoiceFooter.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/invoice-footer-check.cjs && node ../tmp/invoice-footer-check.cjs"
+    "test:invoice-footer": "esbuild tests/invoiceFooter.test.ts --bundle --platform=node --format=cjs --outfile=../tmp/invoice-footer-check.cjs && node ../tmp/invoice-footer-check.cjs",
+    "test:invoice-layout": "esbuild tests/invoiceLayout.test.tsx --bundle --platform=node --format=cjs --loader:.css=empty --jsx=automatic --outfile=../tmp/invoice-layout-check.cjs && node ../tmp/invoice-layout-check.cjs"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.14",

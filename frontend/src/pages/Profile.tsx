@@ -311,7 +311,7 @@ export default function Profile() {
             <div className="space-y-2">
               <Label htmlFor="company_phone_whatsapp">WhatsApp</Label>
               <Input id="company_phone_whatsapp" name="company_phone_whatsapp" maxLength={20} type="tel" value={formData.company_phone_whatsapp} onChange={handleChange} placeholder="06 00 63 00 43" disabled={saving} />
-              <p className="text-xs text-muted-foreground">Affiché dans le pied de page de vos nouveaux documents. À défaut, le numéro du modèle Arabic Stone est utilisé.</p>
+              <p className="text-xs text-muted-foreground">Utilisé sur les bons d’achat. Les factures affichent uniquement le téléphone principal.</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="company_email">Email</Label>
