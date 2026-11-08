@@ -1,0 +1,23 @@
+﻿[build]
+  base = "frontend"
+  command = "node -e \"const u = process.env.VITE_API_URL; try { if (!u || new URL(u).protocol !== 'https:') throw 0; } catch { console.error('VITE_API_URL must be an absolute HTTPS URL'); process.exit(1); }\" && npm ci && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000"
