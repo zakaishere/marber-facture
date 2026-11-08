@@ -1,4 +1,4 @@
-﻿[build]
+[build]
   base = "frontend"
   command = "node -e \"const u = process.env.VITE_API_URL; try { if (!u || new URL(u).protocol !== 'https:') throw 0; } catch { console.error('VITE_API_URL must be an absolute HTTPS URL'); process.exit(1); }\" && npm ci && npm run build"
   publish = "dist"
